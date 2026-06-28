@@ -218,6 +218,7 @@
     padding-left: 0;
 }
 .prompt_pilot-dummy {
+    display: initial !important;
     height: 0 !important;
     position: absolute !important;
     visibility: hidden !important;
