@@ -4,8 +4,7 @@ import { gunzipSync } from 'fflate';
 
 export const loadModelsData = async () => {
     try {
-        const path = new URL(import.meta.url).pathname.split('/', 5).join('/');
-        const res = await fetch(`${path}/models.json.gz`);
+        const res = await fetch(new URL('../models.json.gz', import.meta.url).href);
         if (!res.ok) return { success: false };
 
         const buffer = new Uint8Array(await res.arrayBuffer());
