@@ -87,7 +87,7 @@ def init(app: FastAPI) -> Dict[str, Any]:
 
 def _load_tag_data_from_csv_file() -> Dict[str, Dict[str, Any]]:
     all_tags = {}
-    tag_source = shared.opts.data.get(f'{EXTENSION_ID}_tag_source', tag_source_default)
+    tag_source = shared.opts.data.get(f'{EXTENSION_ID}.tag_source', tag_source_default)
 
     tags_csv_path = os.path.join(extension_dir, "tags", tag_source, "tags.csv")
     if os.path.exists(tags_csv_path):
@@ -228,7 +228,7 @@ def on_app_started(app: FastAPI) -> None:
     with gzip.open(output_path, "wt", encoding="utf-8") as f:
         json.dump(init(app), f, ensure_ascii=True, separators=(',', ':'))
 
-    enabled = shared.opts.data.get(f'{EXTENSION_ID}_enabled', True)
+    enabled = shared.opts.data.get(f'{EXTENSION_ID}.enabled', True)
     if enabled:
         executor = ThreadPoolExecutor()
         future: Future = executor.submit(functools.partial(init, app))
@@ -258,31 +258,31 @@ def init_options() -> None:
 
     opts = OptionInfo()
 
-    opts.set_option(f"{EXTENSION_ID}_enabled",
+    opts.set_option(f"{EXTENSION_ID}.enabled",
                     OptionForms.checkbox("Enabled", True))
-    opts.set_option(f"{EXTENSION_ID}_tag_source",
+    opts.set_option(f"{EXTENSION_ID}.tag_source",
                     OptionForms.dropdown("Source for tag autocompletion", tag_source_default, tag_sources))
-    # opts.set_option(f"{EXTENSION_ID}_suggest_enabled",
+    # opts.set_option(f"{EXTENSION_ID}.suggest_enabled",
     #                 OptionForms.checkbox("Enable tag suggestion", True))
-    opts.set_option(f"{EXTENSION_ID}_max_results_group0",
+    opts.set_option(f"{EXTENSION_ID}.max_results_group0",
                     OptionForms.slider("Maximum results (General tag)", 30, **maximum_limit_slider_opts))
-    opts.set_option(f"{EXTENSION_ID}_max_results_group1",
+    opts.set_option(f"{EXTENSION_ID}.max_results_group1",
                     OptionForms.slider("Maximum results (Artist tag)", 10, **maximum_limit_slider_opts))
-    opts.set_option(f"{EXTENSION_ID}_max_results_group3",
+    opts.set_option(f"{EXTENSION_ID}.max_results_group3",
                     OptionForms.slider("Maximum results (Copyright tag)", 10, **maximum_limit_slider_opts))
-    opts.set_option(f"{EXTENSION_ID}_max_results_group4",
+    opts.set_option(f"{EXTENSION_ID}.max_results_group4",
                     OptionForms.slider("Maximum results (Character tag)", 10, **maximum_limit_slider_opts))
-    opts.set_option(f"{EXTENSION_ID}_max_results_group5",
+    opts.set_option(f"{EXTENSION_ID}.max_results_group5",
                     OptionForms.slider("Maximum results (Meta tag)", 10, **maximum_limit_slider_opts))
-    opts.set_option(f"{EXTENSION_ID}_max_results_groupcustom",
+    opts.set_option(f"{EXTENSION_ID}.max_results_groupcustom",
                     OptionForms.slider("Maximum results (Custom Tag)", 20, **maximum_limit_slider_opts))
-    opts.set_option(f"{EXTENSION_ID}_max_results_grouplora",
+    opts.set_option(f"{EXTENSION_ID}.max_results_grouplora",
                     OptionForms.slider("Maximum results (Lora)", 100, **maximum_limit_slider_opts))
 
-    opts.set_option(f"{EXTENSION_ID}_using_execCommand",
+    opts.set_option(f"{EXTENSION_ID}.using_execCommand",
                     OptionForms.checkbox("Use the deprecated execCommand function to replace text", True))
 
-    opts.set_option(f"{EXTENSION_ID}_post_count_threshold",
+    opts.set_option(f"{EXTENSION_ID}.post_count_threshold",
                     OptionForms.slider("Threshold for post count", post_count_threshold_default, 0, 1000))
 
     for tag_source in tag_sources:
@@ -290,11 +290,11 @@ def init_options() -> None:
         with opts.section(f"{tag_source} tag delimiter"):
             for key, val in [(0, "General"), (1, "Artist"), (3, "Copyright"), (4, "Character"), (5, "Meta"), ("custom", "Custom")]:
                 opt_type = OptionForms.radio(f"[{val}] tag delimiter", "auto", choices=["auto", "space", "underscore"])
-                opts.set_option(f"{EXTENSION_ID}_{replaced_tag_source}_{key}_tag_delimiter", opt_type)
+                opts.set_option(f"{EXTENSION_ID}.{replaced_tag_source}_{key}_tag_delimiter", opt_type)
 
-    opts.set_option(f"{EXTENSION_ID}_always_underscore_tags",
+    opts.set_option(f"{EXTENSION_ID}.always_underscore_tags",
                     OptionForms.textarea("Always use underscores for these tags", always_underscore_tags_default, lines=4))
-    opts.set_option(f"{EXTENSION_ID}_always_space_tags",
+    opts.set_option(f"{EXTENSION_ID}.always_space_tags",
                     OptionForms.textarea("Always use spaces for these tags", "", lines=4))
 
     shared.register_option(EXTENSION_ID, EXTENSION_NAME, opts)
